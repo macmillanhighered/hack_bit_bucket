@@ -37,13 +37,16 @@ if [ -d ${REPOSITORY_PATH}/${REPOSITORY_NAME} ]; then
     cd ${REPOSITORY_PATH}/${REPOSITORY_NAME}
 
     nonsensecommandtoprimestatus >/dev/null 2>&1;
-    until [ `echo $?` -eq 0 ]; do sleep 3; git fetch --all; done ;
-
-    git checkout ${BRANCH};
+    echo "git fetch --all for ${REPOSITORY_PATH}/${REPOSITORY_NAME}"
+    until [ `echo $?` -eq 0 ]; do sleep 3; git fetch -q --all; done ;
+    
+    echo "checking out ${BRANCH}"
+    git checkout -q ${BRANCH};
     #default to master if branch does not exist
     if [ 0 != $? ]; then
         BRANCH="master";
-        git checkout ${BRANCH};
+        echo "checking out ${BRANCH}"
+        git checkout -q ${BRANCH};
     fi;
 
     git reset --hard origin/${BRANCH};
@@ -54,10 +57,12 @@ else
     nonsensecommandtoprimestatus >/dev/null 2>&1;
     until [ `echo $?` -eq 0 ]; do
         sleep 3;
-        git clone git@bitbucket.org:mnv_tech/${REPOSITORY} ${REPOSITORY_PATH}/${REPOSITORY_NAME}
+        echo "cloning git@bitbucket.org:mnv_tech/${REPOSITORY} into ${REPOSITORY_PATH}/${REPOSITORY_NAME"
+        git clone -q git@bitbucket.org:mnv_tech/${REPOSITORY} ${REPOSITORY_PATH}/${REPOSITORY_NAME}
     done
 
     cd ${REPOSITORY_PATH}/${REPOSITORY_NAME}
-    git checkout ${BRANCH}
+    echo "checking out ${BRANCH}"
+    git checkout -q ${BRANCH}
     exit 0;
 fi
